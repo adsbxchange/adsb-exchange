@@ -8,7 +8,7 @@ After=network.target
 EnvironmentFile=/etc/default/adsbexchange
 ExecStart=/usr/bin/mlat-client \
 	--input-type dump1090 --no-udp \
-	--input-connect localhost:30005 \
+	--input-connect $INPUT \
 	--server $MLATSERVER \
 	--user $USER \
 	--lat $RECEIVERLATITUDE \

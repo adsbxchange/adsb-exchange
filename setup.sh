@@ -238,6 +238,7 @@ fi
     RECEIVERALTITUDE="$RECEIVERALTITUDE"
     RESULTS="beast,connect,localhost:30104"
     MLATSERVER="feed.adsbexchange.com:31090"
+	INPUT="127.0.0.1:30005"
 EOF
 
     echo 76
