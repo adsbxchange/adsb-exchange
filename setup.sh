@@ -37,6 +37,11 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
+## make sure the script is the current version
+
+git checkout -f
+git pull -f
+
 ## CHECK FOR PACKAGES NEEDED BY THIS SCRIPT
 
 echo -e "\033[33m"
