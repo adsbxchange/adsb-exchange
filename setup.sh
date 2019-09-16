@@ -45,8 +45,8 @@ echo "Checking for packages needed to run this script..."
 if [ $(dpkg-query -W -f='${STATUS}' curl 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
     echo "Installing the curl package..."
     echo -e "\033[37m"
-    sudo apt-get update
-    sudo apt-get install -y curl
+    apt-get update
+    apt-get install -y curl
 fi
 echo -e "\033[37m"
 
@@ -116,32 +116,32 @@ fi
 
     # Check that the prerequisite packages needed to build and install mlat-client are installed.
     if [ $(dpkg-query -W -f='${STATUS}' build-essential 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        sudo apt-get install -y build-essential >> $LOGFILE  2>&1
+        apt-get install -y build-essential >> $LOGFILE  2>&1
     fi
 
     echo 10
     sleep 0.25
 
     if [ $(dpkg-query -W -f='${STATUS}' debhelper 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        sudo apt-get install -y debhelper >> $LOGFILE  2>&1
+        apt-get install -y debhelper >> $LOGFILE  2>&1
     fi
 
     echo 16
     sleep 0.25
 
     if [ $(dpkg-query -W -f='${STATUS}' python 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        sudo apt-get install -y python >> $LOGFILE  2>&1
+        apt-get install -y python >> $LOGFILE  2>&1
     fi
     
     if [ $(dpkg-query -W -f='${STATUS}' python3-dev 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        sudo apt-get install -y python3-dev >> $LOGFILE  2>&1
+        apt-get install -y python3-dev >> $LOGFILE  2>&1
     fi
 
     echo 22
     sleep 0.25
 
     if [ $(dpkg-query -W -f='${STATUS}' socat 2>/dev/null | grep -c "ok installed") -eq 0 ]; then
-        sudo apt-get install -y socat >> $LOGFILE  2>&1
+        apt-get install -y socat >> $LOGFILE  2>&1
     fi
 
     echo 28
@@ -171,7 +171,7 @@ fi
     # Build and install the mlat-client package.
     dpkg-buildpackage -b -uc >> $LOGFILE 2>&1
     cd .. >> $LOGFILE
-    sudo dpkg -i mlat-client_${MLATCLIENTVERSION}*.deb >> $LOGFILE 2>&1
+    dpkg -i mlat-client_${MLATCLIENTVERSION}*.deb >> $LOGFILE 2>&1
 
     echo 40
     sleep 0.25
@@ -187,7 +187,7 @@ fi
     sleep 0.25
 
     # Remove old method of starting the feed script if present from rc.local
-    sudo sed -i -e '/adsbexchange-mlat_maint.sh/d' /etc/rc.local >> $LOGFILE 2>&1
+    sed -i -e '/adsbexchange-mlat_maint.sh/d' /etc/rc.local >> $LOGFILE 2>&1
 
     echo 58
     sleep 0.25
@@ -196,24 +196,24 @@ fi
     # Kill the old adsbexchange-mlat_maint.sh script in case it's still running from a previous install
     PIDS=`ps -efww | grep -w "adsbexchange-mlat_maint.sh" | awk -vpid=$$ '$2 != pid { print $2 }'`
     if [ ! -z "$PIDS" ]; then
-        sudo kill $PIDS >> $LOGFILE 2>&1
-        sudo kill -9 $PIDS >> $LOGFILE 2>&1
+        kill $PIDS >> $LOGFILE 2>&1
+        kill -9 $PIDS >> $LOGFILE 2>&1
     fi
 
     echo 64
     sleep 0.25
 
     # copy adsbexchange-mlat service file
-    sudo cp $PWD/scripts/adsbexchange-mlat.service /lib/systemd/system >> $LOGFILE 2>&1
+    cp $PWD/scripts/adsbexchange-mlat.service /lib/systemd/system >> $LOGFILE 2>&1
 
     # reload systemd daemons
-    sudo systemctl daemon-reload
+    systemctl daemon-reload
 
     # Enable adsbexchange-mlat service
-    sudo systemctl enable adsbexchange-mlat >> $LOGFILE 2>&1
+    systemctl enable adsbexchange-mlat >> $LOGFILE 2>&1
 
     # Start or restart adsbexchange-mlat service
-    sudo systemctl restart adsbexchange-mlat >> $LOGFILE 2>&1
+    systemctl restart adsbexchange-mlat >> $LOGFILE 2>&1
 
 
     echo 70
@@ -226,11 +226,11 @@ fi
     echo "-------------------------------------------------" >> $LOGFILE
     echo "" >> $LOGFILE
 
-    sudo mkdir -p /usr/local/bin
-    sudo cp $PWD/scripts/adsbexchange-feed.sh /usr/local/bin
-    sudo cp $PWD/scripts/adsbexchange-feed.service /lib/systemd/system
+    mkdir -p /usr/local/bin
+    cp $PWD/scripts/adsbexchange-feed.sh /usr/local/bin
+    cp $PWD/scripts/adsbexchange-feed.service /lib/systemd/system
 
-    sudo tee /etc/default/adsbexchange > /dev/null <<EOF
+    tee /etc/default/adsbexchange > /dev/null <<EOF
     RECEIVERPORT="$RECEIVERPORT"
     USER="$NOSPACENAME"
     RECEIVERLATITUDE="$RECEIVERLATITUDE"
@@ -245,16 +245,16 @@ EOF
     sleep 0.25
 
     # Set permissions on the file adsbexchange-feed.sh.
-    sudo chmod +x /usr/local/bin/adsbexchange-feed.sh >> $LOGFILE
+    chmod +x /usr/local/bin/adsbexchange-feed.sh >> $LOGFILE
 
     echo 82
     sleep 0.25
 
     # Remove old method of starting the feed script if present from rc.local
-    sudo sed -i -e '/adsbexchange-netcat_maint.sh/d' /etc/rc.local >> $LOGFILE 2>&1
+    sed -i -e '/adsbexchange-netcat_maint.sh/d' /etc/rc.local >> $LOGFILE 2>&1
 
     # Enable adsbexchange-feed service
-    sudo systemctl enable adsbexchange-feed  >> $LOGFILE 2>&1
+    systemctl enable adsbexchange-feed  >> $LOGFILE 2>&1
 
     echo 88
     sleep 0.25
@@ -262,18 +262,18 @@ EOF
     # Kill the old adsbexchange-netcat_maint.sh script in case it's still running from a previous install
     PIDS=`ps -efww | grep -w "adsbexchange-netcat_maint.sh" | awk -vpid=$$ '$2 != pid { print $2 }'`
     if [ ! -z "$PIDS" ]; then
-        sudo kill $PIDS >> $LOGFILE 2>&1
-        sudo kill -9 $PIDS >> $LOGFILE 2>&1
+        kill $PIDS >> $LOGFILE 2>&1
+        kill -9 $PIDS >> $LOGFILE 2>&1
     fi
 
     echo 94
     sleep 0.25
 
     # reload systemd daemons
-    sudo systemctl daemon-reload
+    systemctl daemon-reload
 
     # Start or restart adsbexchange-feed service
-    sudo systemctl restart adsbexchange-feed  >> $LOGFILE 2>&1
+    systemctl restart adsbexchange-feed  >> $LOGFILE 2>&1
 
 
     echo 100
