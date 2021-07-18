@@ -1,8 +1,7 @@
-
 [Unit]
 Description=adsbexchange-mlat
-Wants=network.target
-After=network.target
+Wants=network-online.target
+After=network-online.target
 
 [Service]
 User=adsbexchange
